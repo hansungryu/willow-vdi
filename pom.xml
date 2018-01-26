@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.willow</groupId>
+	<artifactId>willow</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<name>willow</name>
+	<organization>
+		<name>Openscale</name>
+		<url>www.openscale.co.kr</url>
+	</organization>
+	<description>willow project for Spring Boot</description>
+
+	<properties>
+		<!--<env>stage</env>-->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<jdk.version>1.8</jdk.version>
+		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
+		<servlet-api.version>3.1.0</servlet-api.version>
+		<javassist.version>3.22.0-GA</javassist.version>
+
+		<servlet-api.version>3.1.0</servlet-api.version>
+		<websocket-api.version>1.1</websocket-api.version>
+		<jstl.version>1.2</jstl.version>
+		<jsf.version>2.2.14</jsf.version>
+		<junit.version>4.12</junit.version>
+		<surefire.version>2.18.1</surefire.version>
+
+		<guacamole-ext.version>0.9.13-incubating</guacamole-ext.version>
+		<guacamole-common.version>0.9.13-incubating</guacamole-common.version>
+		<guacamole-common-js.version>0.9.13-incubating</guacamole-common-js.version>
+
+
+		<spring-data-rest.version>3.0.1.RELEASE</spring-data-rest.version>
+		<spring-data-rest-hal-browser.version>3.0.1.RELEASE</spring-data-rest-hal-browser.version>
+
+		<postgresql.version>42.1.4</postgresql.version>
+		<HikariCP.version>2.7.1</HikariCP.version>
+
+		<validation-api.version>2.0.0.Final</validation-api.version>
+		<hibernate-core.version>5.2.12.Final</hibernate-core.version>
+		<hibernate-entitymanager.version>5.2.12.Final</hibernate-entitymanager.version>
+		<hibernate-ehcache.version>5.2.12.Final</hibernate-ehcache.version>
+		<hibernate-hikaricp.version>5.2.12.Final</hibernate-hikaricp.version>
+		<hibernate-validator.version>6.0.5.Final</hibernate-validator.version>
+		<hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
+		<jackson-datatype-hibernate5.version>2.9.2</jackson-datatype-hibernate5.version>
+
+		<openstack4j.version>3.1.0</openstack4j.version>
+
+		<slf4j.version>1.7.25</slf4j.version>
+		<logback.version>1.2.1</logback.version>
+	</properties>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+					<include>**/*.xsd</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources-filtered</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Written for 1.8 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<compilerArgs>
+						<arg>-Xlint:all</arg>
+						<arg>-Werror</arg>
+					</compilerArgs>
+					<fork>true</fork>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven-war-plugin.version}</version>
+				<configuration>
+
+					<webResources>
+
+						<!-- Filter translation strings -->
+						<resource>
+							<directory>src/main/webapp</directory>
+							<filtering>true</filtering>
+							<includes>
+								<include>translations/*.json</include>
+								<include>index.html</include>
+							</includes>
+						</resource>
+
+						<!-- Include all licenses within META-INF -->
+						<resource>
+							<directory>src/licenses</directory>
+							<targetPath>META-INF</targetPath>
+						</resource>
+
+					</webResources>
+
+					<!-- Add files from guacamole-common-js -->
+					<!--<overlays>
+						<overlay>
+							<groupId>org.apache.guacamole</groupId>
+							<artifactId>guacamole-common-js</artifactId>
+							<type>zip</type>
+						</overlay>
+					</overlays>-->
+
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Pre-cache Angular templates with maven-angular-plugin -->
+			<plugin>
+				<groupId>com.keithbranton.mojo</groupId>
+				<artifactId>angular-maven-plugin</artifactId>
+				<version>0.3.2</version>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>html2js</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sourceDir>${basedir}/src/main/webapp/app/</sourceDir>
+					<include>**/*.html</include>
+					<target>${basedir}/src/main/webapp/generated/templates-main/templates.js</target>
+					<prefix>app</prefix>
+				</configuration>
+			</plugin>
+
+			<!-- JS/CSS Minification Plugin -->
+			<!--<plugin>
+				<groupId>com.samaxes.maven</groupId>
+				<artifactId>minify-maven-plugin</artifactId>
+				<version>1.7.5</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<charset>UTF-8</charset>
+
+							<webappSourceDir>${project.build.directory}/${project.build.finalName}</webappSourceDir>
+
+							<cssSourceDir>/</cssSourceDir>
+							<cssTargetDir>/</cssTargetDir>
+							<cssFinalFile>openopsvdi.css</cssFinalFile>
+
+							<cssSourceFiles>
+								<cssSourceFile>license.txt</cssSourceFile>
+							</cssSourceFiles>
+
+							<cssSourceIncludes>
+								<cssSourceInclude>app/**/*.css</cssSourceInclude>
+							</cssSourceIncludes>
+
+							<jsSourceDir>/</jsSourceDir>
+							<jsTargetDir>/</jsTargetDir>
+							<jsFinalFile>openopsvdi.js</jsFinalFile>
+
+							<jsSourceFiles>
+								<jsSourceFile>license.txt</jsSourceFile>
+							&lt;!&ndash;	<jsSourceFile>guacamole-common-js/all.js</jsSourceFile>&ndash;&gt;
+							</jsSourceFiles>
+
+							<jsSourceIncludes>
+								<jsSourceInclude>app/**/*.js</jsSourceInclude>
+								<jsSourceInclude>generated/**/*.js</jsSourceInclude>
+							</jsSourceIncludes>
+
+							&lt;!&ndash; Do not minify and include tests &ndash;&gt;
+							<jsSourceExcludes>
+								<jsSourceExclude>**/*.test.js</jsSourceExclude>
+							</jsSourceExcludes>
+							<jsEngine>CLOSURE</jsEngine>
+
+							&lt;!&ndash; Disable warnings for JSDoc annotations &ndash;&gt;
+							<closureWarningLevels>
+								<misplacedTypeAnnotation>OFF</misplacedTypeAnnotation>
+								<nonStandardJsDocs>OFF</nonStandardJsDocs>
+							</closureWarningLevels>
+
+						</configuration>
+						<goals>
+							<goal>minify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.version}</version>
+				<configuration>
+					<junitArtifactName> junit:junit:${junit.version} </junitArtifactName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.9.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<dependencies>
+
+		<!-- Servlet & JSP -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- To compile JSP files -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JSR 356 WebSocket API -->
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+			<version>${websocket-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Spring boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- marked the embedded servlet container as provided -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Guacamole Java API -->
+		<dependency>
+			<groupId>org.apache.guacamole</groupId>
+			<artifactId>guacamole-common</artifactId>
+			<version>${guacamole-common.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Guacamole Extension API -->
+		<dependency>
+			<groupId>org.apache.guacamole</groupId>
+			<artifactId>guacamole-ext</artifactId>
+			<version>${guacamole-ext.version}</version>
+		</dependency>
+
+		<!-- Guacamole JavaScript API -->
+		<!--<dependency>
+			<groupId>org.apache.guacamole</groupId>
+			<artifactId>guacamole-common-js</artifactId>
+			<version>${guacamole-common-js.version}</version>
+			<type>zip</type>
+			<scope>runtime</scope>
+		</dependency>-->
+
+        <!-- WebJars -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>0.30</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui</artifactId>
+			<version>1.12.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>select2</artifactId>
+			<version>4.0.3-1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>metro</artifactId>
+			<version>3.0.17</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>angularjs</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>requirejs</artifactId>
+			<version>2.3.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>angularAMD</artifactId>
+			<version>0.2.1-1</version>
+		</dependency>
+
+		<!-- Openstack4j -->
+		<dependency>
+			<groupId>org.pacesys</groupId>
+			<artifactId>openstack4j</artifactId>
+			<version>${openstack4j.version}</version>
+			<classifier>withdeps</classifier>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>javassist</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- JSR-250 annotations -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate5</artifactId>
+			<version>${jackson-datatype-hibernate5.version}</version>
+		</dependency>
+
+		<!-- JSR303 Validation -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${validation-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+		</dependency>
+
+		<!-- Data Source including ORM -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate-core.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<version>${hibernate-jpa-2.1-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate-entitymanager.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>${hibernate-ehcache.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-hikaricp</artifactId>
+			<version>${hibernate-hikaricp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${HikariCP.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://central.maven.org/maven2/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+		</repository>
+		<repository>
+			<id>spring-releases</id>
+			<url>https://repo.spring.io/libs-release</url>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<url>http://repo.spring.io/snapshot</url>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<url>http://repo.spring.io/milestone</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-releases</id>
+			<url>https://repo.spring.io/libs-release</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<url>http://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>http://repo.spring.io/milestone</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<!--
+        프로필.
+        개발용은 로컬의 pgsql을 참조함.
+        기본적으로 guacd는 동일한 host에 설치되었다 가정하여 동작하며
+        실제로도 Data 대역폭을 생각하면 그렇게 해야함.
+    -->
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<jdbc.url>jdbc:postgresql://192.168.6.3:5432/vd1</jdbc.url>
+				<jdbc.username>gg</jdbc.username>
+				<jdbc.password>qwer00</jdbc.password>
+				<guacd.host>192.168.192.132</guacd.host>
+				<guacd.host>192.168.6.3</guacd.host>
+				<guacd.port>4822</guacd.port>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+
+		</profile>
+		<profile>
+			<id>stage</id>
+			<properties>
+				<jdbc.url>jdbc:postgresql://192.168.6.3:5432/vd1</jdbc.url>
+				<jdbc.username>gg</jdbc.username>
+				<jdbc.password>qwer00</jdbc.password>
+				<guacd.host>192.168.6.3</guacd.host>
+				<guacd.port>4822</guacd.port>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<properties>
+				<jdbc.url>jdbc:postgresql://192.168.6.1:5432/vd1</jdbc.url>
+				<jdbc.username>gg</jdbc.username>
+				<jdbc.password>qwer00</jdbc.password>
+				<guacd.host>192.168.6.3</guacd.host>
+				<guacd.port>4822</guacd.port>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>

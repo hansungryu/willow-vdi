@@ -1,0 +1,134 @@
+.black {
+	background-image: url("../../resources/img/black_pattern.png");
+}
+
+.ci-menu{height: 1.2rem; width: 2rem;}
+.ci-menu2{height: 2.0rem; width: 4rem;}
+
+.ci-banner{height: 2.5rem;}
+
+
+.rotate-counterclock{
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	transform: rotate(-90deg);
+
+	-webkit-transform-origin: 50% 50%;
+	-moz-transform-origin: 100% 100%;
+	-ms-transform-origin: 50% 50%;
+	-o-transform-origin: 50% 50%;
+	transform-origin: 0% 0%;
+
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.rotate-clock{
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	transform: rotate(90deg);
+
+	-webkit-transform-origin: 50% 50%;
+	-moz-transform-origin: 50% 50%;
+	-ms-transform-origin: 50% 50%;
+	-o-transform-origin: 50% 50%;
+	transform-origin: 50% 50%;
+
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+
+body{background:blue;}
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+nav {
+	float: right;
+	position: relative;
+}
+
+#bar1 {
+	background: black;
+	color: white;
+	overflow:auto;
+	font-size: 13px;
+}
+
+#bar1>li {
+	font-weight: normal;
+	float: left;
+	font-family: Verdana,Arial,sans-serif;
+	font-size:1.1em;
+}
+#bar1>li>a {
+	border: none;
+	color: white;
+	display:block;
+	padding:0.4em 1em;
+	line-height:1.4;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none !important;
+}
+#bar1>li>a:hover,#bar1>li>a:active, #bar1>li>a:focus,#bar1>li:hover>a,#bar1>li.show>a {
+	background: gray;
+	border: none;
+	color: orange;
+}
+
+#bar1>li>ul>li {
+	background: gray;
+	border: 2px solid white;
+	border-top: none;
+	left: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.dropdown-container {
+	color: white;
+	overflow: hidden;
+	padding: 10px;
+}
+
+.dropdown-blurb {
+	border-right: 2px solid orange;
+	float: left;
+	padding: 10px;
+	width: 200px;
+}
+
+#bar1>li>ul>li .dropdown-links {
+	float: left;
+}
+
+#bar1>li>ul>li .dropdown-links a {
+	color: white;
+	display: block;
+	margin: 10px;
+	text-decoration:none!important;
+	line-height: 1.5;
+	padding: 0.2em 0.4em;
+	text-decoration: none;
+}
+
+#bar1>li>ul>li .dropdown-links a:hover {
+	color: orange;
+}
+#bar1>li>ul{
+	display:none;
+}
+#bar1>li.show>ul{
+	display:block;
+}
+#bar1>li:hover>ul{
+	display:block;
+}
+
+

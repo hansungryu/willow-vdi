@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--<layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} %highlight(%-5level %cyan(%logger{36}) - %msg%n)</Pattern>
+        </layout>-->
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%-36logger{36}) %X - %highlight(%msg %n)</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.willow.vd1" level="TRACE"/>
+
+
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
