@@ -1,3 +1,4 @@
+<%@page language="java" contentType="text/html; charset=UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
@@ -22,7 +23,7 @@
 
     <link rel="icon" type="image/png" href="${pathImage}/openops_ci_head_wht_org.png"/>
     <link rel="apple-touch-icon" type="image/png" href="${pathImage}/openops_ci_head_wht_org.png"/>
-    <link rel="shortcut icon" href="${pathImage}/favicon.png">
+    <%--<link rel="shortcut icon" href="${pathImage}/favicon.png">--%>
 
     <link rel="stylesheet" href="webjars/select2/4.0.3/css/select2.min.css">
     <link rel="stylesheet" href="webjars/metro/3.0.17/build/css/metro.css">
@@ -42,27 +43,10 @@
     <title ng-bind="title"></title>
 
 </head>
-<%--<body ng-controller="homeController" ng-class="bodyClassName">--%>
 <body  ng-class="bodyClassName">
-<div ng-include='"tile/mainmenu"'></div>
-<div ng-view></div>
-index4
+    <div ng-include='"tile/mainmenu"'></div>
+    <div ng-view></div>
 
-<script data-main="${pathJs}/main.js" src="webjars/requirejs/2.3.5/require.min.js"></script>
-<%--<!-- Utility libraries -->
-<script type="text/javascript" src="webjars/jquery/3.1.1/jquery.min.js"></script>
-<script type="text/javascript" src="webjars/jquery-ui/1.12.1/jquery-ui.min.js"></script>
-<script type="text/javascript" src="webjars/select2/4.0.3/js/select2.min.js"></script>
-<script type="text/javascript" src="webjars/metro/3.0.17/build/js/metro.min.js"></script>
-<!-- AngularJS -->
-<script type="text/javascript" src="webjars/angularjs/1.6.2/angular.js"></script>
-<script type="text/javascript" src="webjars/angularjs/1.6.2/angular-cookies.js"></script>
-<script type="text/javascript" src="webjars/angularjs/1.6.2/angular-sanitize.js"></script>
-<script type="text/javascript" src="webjars/angularjs/1.6.2/angular-route.js"></script>
-<script type="text/javascript" src="webjars/angularjs/1.6.2/angular-animate.js"></script>
-<!-- Web application -->
-&lt;%&ndash;<script type="text/javascript" src="openopsvdi.min.js"></script>&ndash;%&gt;
-<script type="text/javascript" src="/app/app.js"></script>
-<script type="text/javascript" src="/app/home/controller/homeController.js"></script>--%>
+    <script data-main="${pathJs}/main.js" src="webjars/requirejs/2.3.5/require.min.js"></script>
 </body>
 </html>

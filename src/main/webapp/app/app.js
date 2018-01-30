@@ -16,6 +16,15 @@ define(['angularAMD', 'angular-route','angular-sanitize','angular-cookies','angu
 
     var currentVdi = null;
     var DEBUG = true;
+    var supportedLocales = [
+        {locale: 'en_US', language: 'English(US)'},
+//	{locale: 'zh_CN', language: '中文(中国)'},
+//	{locale: 'ja_JP', language: '日本語'},
+//	{locale: 'de_DE', language: 'Deutsch'},
+//	{locale: 'es_ES', language: 'español(ES)'},
+//	{locale: 'ru_RU', language: 'Русский'},
+        {locale: 'ko_KR', language: '한국어'}
+    ];
 
     //var app = angular.module("vd1", ['ngRoute']);
 
@@ -27,24 +36,123 @@ define(['angularAMD', 'angular-route','angular-sanitize','angular-cookies','angu
         'ngAnimate'
     ]);
 
-    app.config(function ($routeProvider) {
+    app.config(function ($routeProvider,$locationProvider) {
+
+        $locationProvider
+            .html5Mode({
+                enables: true,
+                requireBase: false,
+                rewriteLinks: false
+            }).hashPrefix('')
+        ;
+
         $routeProvider
             .when("/", angularAMD.route({
                 title: 'Home',
                 bodyClassName: 'bg-white',
                 controller: 'homeController',
-                controllerUrl: 'home/controller/homeController'
+                controllerUrl: 'home/controller/homeController',
+                templateUrl: 'tile/static',
             }))
             .otherwise({redirectTo: "/"});
     });
 
+    app.service('svc',[
+    '$q',
+    function($q){
+        // 뭐하는짓이냐
+        // return{
+        // 	isAuthenticated: function(){
+        // 		return false;
+        // 	},
+        // 	getAuthStat: function(){
+        //
+        // 	}
+        // }
+    }
+    ]);
+
+    app.factory('fac',[
+    '$http',
+    '$q',
+    function($http,$q){
+        var appName = '';
+        return {
+            getAppName: function(){ return appName; },
+            setAppName: function(newName){ appName = newName; },
+            getTile: function(item){
+                return $http({
+                    method: 'GET',
+                    url: 'tile/' + item,
+                    timeout: 2000,
+                    async: true,
+                    cache: false,
+                    headers: { 'Accept': 'application/html' , 'Pragma': 'no-cache'}
+                });
+            },
+            // 여러개의 Tile URL을 Transaction 조건으로 모두 받거나 혹은 모두 실패처리
+            // 반환값이 response[] 형태에 주의
+            getTiles: function(target){
+                var deferred = $q.defer();
+                var items = [].concat(target);
+                var tasks = [];
+
+                angular.forEach(items, function(item) {
+                    tasks.push(
+                        $http({
+                            method: 'GET',
+                            url: 'tile/' + item,
+                            async: true,
+                            cache: false,
+                            headers: {'Accept': 'application/html', 'Pragma': 'no-cache'}
+                        })
+                    );
+                });
+
+                $q.all(tasks).then(
+                    function(results){ deferred.resolve(results); },
+                    function(errors){ deferred.reject(errors); },
+                    function(updates){ deferred.update(updates); }
+                );
+                return deferred.promise;
+            },
+            // Web Service를 JSON형태로 가져올때
+            // TODO: Validating처리
+            getJson: function(item){
+                return $http({
+                    method: 'GET',
+                    url: 'rest/' + item,
+                    async: true,
+                    cache: false,
+                    headers: { 'Accept': 'application/json' , 'Pragma': 'no-cache'}
+                });
+            },
+            closeDialog: function(dialogId){if($('#'+dialogId).length) metroDialog.close('#'+dialogId);},
+            closeAllDialogs: function(){$("[id^=dialog]").each(function(){metroDialog.close('#'+$(this).attr('id'));});},
+            openDialog: function(dialogId){
+                this.closeAllDialogs();
+                if($('#'+dialogId).length) metroDialog.open('#'+dialogId);
+            },
+            debugAjaxResponse: function(res){
+                if(DEBUG) console.debug(
+                    'data:' + res.data
+                    + '\nstatus: ' + res.status
+                    // +'\nheaders: '+res.headers
+                    + '\nconfig: ' + JSON.stringify(res.config)
+                    + '\nstatusText: ' + res.statusText
+                    + '\nxhrStatus: ' + res.xhrStatus
+                );
+            }
+        };
+    }]);
+
     app.run([
-        //'fac',
+        'fac',
         '$rootScope',
         '$location',
         '$route',
-        //function(fac,$rootScope,$location,$route){
-        function($rootScope,$location,$route){
+        function(fac,$rootScope,$location,$route){
+        //function($rootScope,$location,$route){
             if(DEBUG) console.debug("Initializing...");
 
             // Initializing $rootScope variables
