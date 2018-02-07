@@ -27,4 +27,4 @@ nbdist/
 
 ### etc ###
 .DS_Store
-.gitignore
+.mvn
